@@ -13,4 +13,6 @@ jobs:
       - name: Step 3 is to install dependencies
         run: npm install
       - name: Step 4 is to run the tests
-        run: npx playwright test
+        run: npx init playwright
+        run: npx playwright test first.spec.timeout-minutes --headed 
+        
