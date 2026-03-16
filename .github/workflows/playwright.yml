@@ -11,4 +11,4 @@ jobs:
       - name: Step 3 is to run the tests
         run: npx playwright install --with-deps
       - name: Step 4 is to run the tests
-        run: npx playwright test first.spec.ts --timeout=60000 --headed 
+        run: npx playwright test first.spec.ts  
