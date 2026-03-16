@@ -1,4 +1,4 @@
-name: Playwright Tests Workflow
+name: Playwright Tests Workflow -  [WorkFlow Name]
 on: push
 jobs:
   testJobName:
@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Step 2 is to install dependencies
         run: npm install
-      - name: Step 3 is to run the tests
+      - name: Step 3 is to install playwright with dependencies
         run: npx playwright install --with-deps
-      - name: Step 4 is to run the tests
+      - name: Step 4 is to run the playwright tests
         run: npx playwright test first.spec.ts
