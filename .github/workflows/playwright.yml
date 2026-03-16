@@ -6,13 +6,9 @@ jobs:
     steps:
       - name: Step 1 is to get the code 
         uses: actions/checkout@v3
-      - name: Step 2 is to setup node
-        uses: actions/setup-node@v3   
-        with:
-          node-version: '18'
-      - name: Step 3 is to install dependencies
+      - name: Step 2 is to install dependencies
         run: npm install
+      - name: Step 3 is to run the tests
+        run: npx install playwright 
       - name: Step 4 is to run the tests
-        run: npx init playwright 
-      - name: Step 5 is to run the tests
         run: npx playwright test first.spec.ts --timeout=60000 --headed 
