@@ -1,5 +1,26 @@
 name: Playwright Tests Workflow -  [WorkFlow Name]
-on: push
+on: 
+  workflow_dispatch:
+    inputs:
+      test_suites:
+        description: 'Select test suites to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - DFB_Includecarrier
+          - DFB_Waterfall-manualposting
+          - DFB_Waterfall-autoposting
+          - DFB_FieldValidation
+          - DFB_Greenscreen
+          - DFB_Matchbid
+          - DFB_Waterfall-manualposting-OfferRateOn
+          - DFB_Waterfall-autoposting-OfferRateOn
+          - DFB_Bidding
+          - DFB_CargoValue
+          - DFB_CarrierAutoAccept
+          - DFB_PostAutomationRule
 jobs:
   testJobName:
     runs-on: ubuntu-latest
