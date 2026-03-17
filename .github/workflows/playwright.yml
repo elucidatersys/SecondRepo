@@ -22,10 +22,45 @@ jobs:
       - name: Determine test suites to run
         id: set-matrix
         run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.test_suites }}" != "all" ]; then
-            echo "matrix={\"test-suite\":[{\"name\":\"${{ github.event.inputs.test_suites }}\",\"grep\":\"${{env[format('{0}_{1}', 'GREP', github.event.inputs.test_suites)] }}\"}]}" >> $GITHUB_OUTPUT
+          SELECTED_SUITE="${{ github.event.inputs.test_suites }}"
+
+          if [ "$SELECTED_SUITE" != "all" ]; then
+
+            # Map suite → grep
+            case "$SELECTED_SUITE" in
+              "TestCases_TaggedWithAbhinav")
+                GREP="^(?=.*@abhinav)"
+                ;;
+              "TestCases_TaggedWithJohn")
+                GREP="^(?=.*@john)"
+                ;;
+              *)
+                GREP=""
+                ;;
+            esac
+
+            echo "Selected suite: $SELECTED_SUITE"
+            echo "Using grep: $GREP"
+
+            # 🔥 Check if any tests exist
+            MATCH_COUNT=$(npx playwright test --grep "$GREP" --list | wc -l)
+
+            echo "Matched tests: $MATCH_COUNT"
+
+            if [ "$MATCH_COUNT" -eq 0 ]; then
+              echo "No tests found. Setting empty matrix."
+              echo "matrix={\"test_suite\":[]}" >> $GITHUB_OUTPUT
+            else
+              echo "matrix={\"test_suite\":[{\"name\":\"$SELECTED_SUITE\",\"grep\":\"$GREP\"}]}" >> $GITHUB_OUTPUT
+            fi
+
           else
-            echo "matrix={\"test-suite\":[{\"name\":\"TestCases_TaggedWithAbhinav\",\"grep\":\"^(?=.*@abhinav)\"},{\"name\":\"TestCases_TaggedWithJohn\",\"grep\":\"^(?=.*@john)\"}]}" >> $GITHUB_OUTPUT
+            echo "Running full suite"
+
+            echo "matrix={\"test_suite\":[
+              {\"name\":\"TestCases_TaggedWithAbhinav\",\"grep\":\"^(?=.*@abhinav)\"},
+              {\"name\":\"TestCases_TaggedWithJohn\",\"grep\":\"^(?=.*@john)\"}
+            ]}" >> $GITHUB_OUTPUT
           fi
 
   run-tests:
