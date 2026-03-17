@@ -23,7 +23,7 @@ jobs:
         id: set-matrix
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.test_suites }}" != "all" ]; then
-            echo "matrix={\"test-suite\":[{\"name\":\"${{ github.event.inputs.test_suites }}\",\"grep\":\"${{ env[format('{0}_{1}', 'GREP', github.event.inputs.test_suites)] }}\"}]}" >> $GITHUB_OUTPUT
+            echo "matrix={\"test-suite\":[{\"name\":\"${{ github.event.inputs.test_suites }}\",\"grep\":\"${{env[format('{0}_{1}', 'GREP', github.event.inputs.test_suites)] }}\"}]}" >> $GITHUB_OUTPUT
           else
             echo "matrix={\"test-suite\":[{\"name\":\"TestCases_TaggedWithAbhinav\",\"grep\":\"^(?=.*@abhinav)\"}]}" >> $GITHUB_OUTPUT
           fi
