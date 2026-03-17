@@ -1,5 +1,6 @@
-name: Playwright Tests Workflow -  [WorkFlow Name]
-on: 
+name: Playwright Tests Workflow
+
+on:
   workflow_dispatch:
     inputs:
       test_suites:
@@ -9,29 +10,45 @@ on:
         type: choice
         options:
           - all
-          - DFB_Includecarrier
-          - DFB_Waterfall-manualposting
-          - DFB_Waterfall-autoposting
-          - DFB_FieldValidation
-          - DFB_Greenscreen
-          - DFB_Matchbid
-          - DFB_Waterfall-manualposting-OfferRateOn
-          - DFB_Waterfall-autoposting-OfferRateOn
-          - DFB_Bidding
-          - DFB_CargoValue
-          - DFB_CarrierAutoAccept
-          - DFB_PostAutomationRule
+          - TestCases_TaggedWithAbhinav
+          - TestCases_TaggedWithJohn
+
 jobs:
-  testJobName:
+  setup-matrix:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Determine test suites to run
+        id: set-matrix
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ github.event.inputs.test_suites }}" != "all" ]; then
+            echo "matrix={\"test-suite\":[{\"name\":\"${{ github.event.inputs.test_suites }}\",\"grep\":\"${{ env[format('{0}_{1}', 'GREP', github.event.inputs.test_suites)] }}\"}]}" >> $GITHUB_OUTPUT
+          else
+            echo "matrix={\"test-suite\":[{\"name\":\"TestCases_TaggedWithAbhinav\",\"grep\":\"^(?=.*@abhinav)\"}]}" >> $GITHUB_OUTPUT
+          fi
+
+  run-tests:
+    needs: setup-matrix
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix: ${{ fromJson(needs.setup-matrix.outputs.matrix) }}
+
     container:
       image: mcr.microsoft.com/playwright:v1.42.1-jammy
+
     steps:
-      - name: Step 1 is to get the code
+      - name: Checkout code
         uses: actions/checkout@v3
-      - name: Step 2 is to install dependencies
+
+      - name: Install dependencies
         run: npm install
-      - name: Step 3 is to install playwright with dependencies
+
+      - name: Install Playwright
         run: npx playwright install --with-deps
-      - name: Step 4 is to run the playwright tests
-        run: npx playwright test first.spec.ts
+
+      - name: Run tests
+        run: |
+          echo "Running suite: ${{ matrix.test_suite.name }}"
+          npx playwright test --grep "${{ matrix.test_suite.grep }}"
