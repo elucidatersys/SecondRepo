@@ -27,22 +27,15 @@ jobs:
           if [ "$SELECTED_SUITE" != "all" ]; then
 
             # Map suite → grep
-            case "$SELECTED_SUITE" in
-              "TestCases_TaggedWithAbhinav")
-                GREP="^(?=.*@abhinav)"
-                ;;
-              "TestCases_TaggedWithJohn")
-                GREP="^(?=.*@john)"
-                ;;
-              *)
-                GREP=""
-                ;;
+            case "$SELECTED_SUITE" in "TestCases_TaggedWithAbhinav") GREP="^(?=.*@abhinav)";;
+                                       "TestCases_TaggedWithJohn")   GREP="^(?=.*@john)";;
+           *)GREP="";;
             esac
 
             echo "Selected suite: $SELECTED_SUITE"
             echo "Using grep: $GREP"
 
-            # 🔥 Check if any tests exist
+            #  Check if any tests exist
             MATCH_COUNT=$(npx playwright test --grep "$GREP" --list | wc -l)
 
             echo "Matched tests: $MATCH_COUNT"
