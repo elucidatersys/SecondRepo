@@ -29,7 +29,7 @@ jobs:
             # Map suite → grep
             case "$SELECTED_SUITE" in "TestCases_TaggedWithAbhinav") GREP="^(?=.*@abhinav)";;
                                        "TestCases_TaggedWithJohn")   GREP="^(?=.*@john)";;
-           *)GREP="";;
+           *)GREP="^$";;
             esac
 
             echo "Selected suite: $SELECTED_SUITE"
